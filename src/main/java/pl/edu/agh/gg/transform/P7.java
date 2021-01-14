@@ -2,9 +2,9 @@ package pl.edu.agh.gg.transform;
 
 import pl.edu.agh.gg.model.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -118,46 +118,53 @@ public class P7 extends Transformation {
         LeftEmbedding e = new LeftEmbedding();
         e.i = interiorNode;
 
-        ENode[] es = Arrays.stream(interiorNode.getAdjacentENodes())
+        List<ENode> es = Arrays.stream(interiorNode.getAdjacentENodes())
                 .filter(n -> n instanceof ENode)
                 .map(n -> (ENode) n)
-                .toArray(ENode[]::new);
-        if (interiorNode.getAdjacentENodes().length != 4 || es.length != 4) {
+                .collect(Collectors.toCollection(ArrayList::new));
+        if (interiorNode.getAdjacentENodes().length != 4 || es.size() != 4) {
             return Optional.empty();
         }
 
-        // Find x4
-        // Assuming nodes go clockwise, x4 should be the first node that has a direct connection to the next node in es.
-        // If there's any other node with this property, P7 is not applicable.
-        int i4 = -1;
-        for (int i = 0; i < es.length; ++i) {
-            if (es[i].hasEdgeBetween(es[(i + 1) % es.length])) {
-                if (i4 >= 0) {
-                    return Optional.empty();
-                } else {
-                    i4 = i;
+        // Find x3 and x4 - the only connected E nodes, order doesn't matter due to P7 symmetry
+        for (int i = 0; i < es.size(); ++i) {
+            for (int j = i + 1; j < es.size(); ++j) {
+                if (es.get(i).hasEdgeBetween(es.get(j))) {
+                    // remove j first as it's always > i, so removal doesn't change i's index
+                    e.x3 = es.remove(j);
+                    e.x4 = es.remove(i);
+                    break;
                 }
             }
         }
-        e.x4 = es[i4];
-        e.x3 = es[(i4 + 1) % es.length];
-        e.x1 = es[(i4 + 2) % es.length];
-        e.x2 = es[(i4 + 3) % es.length];
 
-        // find midpoint nodes
-        List<Optional<ENode>> ms = Arrays.asList(
-                getMidpoint(e.x1, e.x2),
-                getMidpoint(e.x1, e.x3),
-                getMidpoint(e.x2, e.x4)
-        );
-        for (Optional<ENode> m : ms) {
-            if (!m.isPresent()) {
-                return Optional.empty();
+        // Find midpoint of x1 and x2
+        Optional<ENode> x12 = getMidpoint(es.get(0), es.get(1));
+        if (!x12.isPresent()) {
+            return Optional.empty();
+        }
+        e.x12 = x12.get();
+
+        // Try to connect one e to x3, if it's not possible try the other
+        for (int i = 0; i < es.size(); ++i) {
+            Optional<ENode> midpoint = getMidpoint(es.get(i), e.x3);
+            if (midpoint.isPresent()) {
+                e.x13 = midpoint.get();
+                e.x1 = es.remove(i);
+                break;
             }
         }
-        e.x12 = ms.get(0).orElseThrow(() -> new NoSuchElementException("impossible"));
-        e.x13 = ms.get(1).orElseThrow(() -> new NoSuchElementException("impossible"));
-        e.x24 = ms.get(2).orElseThrow(() -> new NoSuchElementException("impossible"));
+        if (e.x1 == null) {
+            return Optional.empty();
+        }
+
+        // The same for x4
+        Optional<ENode> midpoint = getMidpoint(es.get(0), e.x4);
+        if (!midpoint.isPresent()) {
+            return Optional.empty();
+        }
+        e.x24 = midpoint.get();
+        e.x2 = es.remove(0);
 
         // Make sure there are no additional edges. We know that the ones required are present, so count all edges
         // between points in the embedding and compare the counts.
