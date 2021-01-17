@@ -64,6 +64,10 @@ public abstract class GraphNode extends SingleNode {
         return coordinates;
     }
 
+    protected String getEdgeName(GraphNode first, GraphNode second) {
+        return first.getId() + second.getId();
+    }
+
     @Override
     public <T extends Edge> T getEdgeBetween(Node node) {
         for (AbstractNode e : this.neighborMap.keySet()) {

@@ -95,6 +95,8 @@ public class P3 extends Transformation {
         // Insert edges for visualization
         graphModel.insertGraphEdge(getEdgeName(interiorNode, nodes.get(9)), interiorNode, nodes.get(9));
         graphModel.insertGraphEdge(getEdgeName(interiorNode, nodes.get(10)), interiorNode, nodes.get(10));
+        graphModel.insertGraphEdge(getEdgeName(interiorNode, nodes.get(11)), interiorNode, nodes.get(11));
+        graphModel.insertGraphEdge(getEdgeName(interiorNode, nodes.get(12)), interiorNode, nodes.get(12));
 
         graphModel.insertGraphEdge(getEdgeName(nodes.get(0), nodes.get(9)), nodes.get(0),nodes.get(9));
         graphModel.insertGraphEdge(getEdgeName(nodes.get(1), nodes.get(9)), nodes.get(1),nodes.get(9));
