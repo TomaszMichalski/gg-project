@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import pl.edu.agh.gg.model.Coordinates;
 import pl.edu.agh.gg.model.GraphModel;
+import pl.edu.agh.gg.model.GraphNode;
 import pl.edu.agh.gg.transform.utils.MockGraphs;
 
 import java.util.List;
@@ -67,6 +68,34 @@ public class P2TestSuite {
 
             assertEquals(pair.toString(), 1L, count);
         }
+    }
+
+    @Test
+    public void missingEdgeP2TransformationTest() {
+
+        GraphModel graphModel = generateGraphModel();
+        Transformation p1 = new P1();
+        Transformation p2 = new P2();
+
+        p1.transform(graphModel, graphModel.getGraphNode("e1").get(), false);
+
+        graphModel.deleteGraphEdge("e1e3e1e4");
+
+        assertFalse(p2.isApplicable(graphModel, graphModel.getGraphNode("e1i1").get(), false));
+    }
+
+    @Test
+    public void missingNodeP2TransformationTest() {
+
+        GraphModel graphModel = generateGraphModel();
+        Transformation p1 = new P1();
+        Transformation p2 = new P2();
+
+        p1.transform(graphModel, graphModel.getGraphNode("e1").get(), false);
+
+        graphModel.removeGraphNode("e1e2");
+
+        assertFalse(p2.isApplicable(graphModel, graphModel.getGraphNode("e1i1").get(), false));
     }
 
 }

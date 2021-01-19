@@ -8,7 +8,9 @@ public class P2 extends Transformation {
 
     @Override
     public boolean isApplicable(GraphModel graphModel, GraphNode interiorNode, boolean isHorizontal) {
-        return interiorNode.isSymbolUpperCase() && orientate(graphModel, interiorNode.getAdjacentENodes(), isHorizontal).isPresent();
+        return interiorNode.isSymbolUpperCase() &&
+                orientate(graphModel, interiorNode.getAdjacentENodes(), isHorizontal).isPresent() &&
+                graphModel.getGraphNodes().containsAll(Arrays.asList(interiorNode.getAdjacentENodes()));
     }
 
     @Override
