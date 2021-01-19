@@ -12,7 +12,7 @@ public final class Coordinates {
     private double y;
     private double originalX;
     private double originalY;
-    private final double level;
+    private double level;
 
     public static Coordinates createCoordinatesWithOffset(double x, double y, double level) {
         return new Coordinates(x + level * OFFSET_X, y + level * OFFSET_Y, level);
@@ -62,6 +62,10 @@ public final class Coordinates {
 
     public double getLevel() {
         return level;
+    }
+
+    public void setLevel(double level) {
+        this.level = level;
     }
 
     public double distance(Coordinates rhs) {

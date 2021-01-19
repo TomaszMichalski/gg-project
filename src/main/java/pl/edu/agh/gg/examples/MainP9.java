@@ -56,6 +56,7 @@ public class MainP9 {
         }
 
         Visualizer visualizer = new Visualizer(graphModel);
+        visualizer.visualize(4);
         visualizer.visualize();
 
     }

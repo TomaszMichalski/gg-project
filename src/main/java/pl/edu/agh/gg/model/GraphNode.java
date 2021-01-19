@@ -37,8 +37,16 @@ public abstract class GraphNode extends SingleNode {
         adjacentENodes.add(nodeToAdd);
     }
 
+    public void removeNeighbourENode(GraphNode nodeToDelete) {
+        adjacentENodes.remove(nodeToDelete);
+    }
+
     public GraphNode[] getAdjacentENodes() {
         return adjacentENodes.toArray(new GraphNode[0]);
+    }
+
+    public List<GraphNode> getAdjacentENodesList() {
+        return adjacentENodes;
     }
 
     public Character getSymbol() {
@@ -51,6 +59,14 @@ public abstract class GraphNode extends SingleNode {
 
     public void symbolToLowerCase() {
         symbol = Character.toLowerCase(symbol);
+    }
+
+    public double getXOrOriginalXCoordinate() {
+        return coordinates.getOriginalX() != 0.0 ? coordinates.getOriginalX() : coordinates.getX();
+    }
+
+    public double getYOrOriginalYCoordinate() {
+        return coordinates.getOriginalY() != 0.0 ? coordinates.getOriginalY() : coordinates.getY();
     }
 
     public double getXCoordinate() {

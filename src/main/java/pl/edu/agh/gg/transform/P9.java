@@ -31,27 +31,33 @@ public class P9 implements TransformationMergeProposal {
 
         List<ENode> commonENodes1 = getCommonENodes(childInteriorNodesAdjacentENodes2, childInteriorNodesAdjacentENodes1);
         List<ENode> commonENodes2 = getCommonENodes(childInteriorNodesAdjacentENodes1, childInteriorNodesAdjacentENodes2);
+        if (commonENodes1.size() != 3 || commonENodes2.size() != 3) return false;
+        if (!verifyCoordinates(commonENodes1) || !verifyCoordinates(commonENodes2)) return false;
 
         List<InteriorNode> commonAdjacentInteriorNodes1 = getCommonAdjacentInteriorNodes(commonENodes1);
         List<InteriorNode> commonAdjacentInteriorNodes2 = getCommonAdjacentInteriorNodes(commonENodes2);
 
-        return commonENodes1.size() == 3 && commonENodes2.size() == 3 && commonAdjacentInteriorNodes1.size() >= 2 && commonAdjacentInteriorNodes2.size() >= 2;
+        return commonAdjacentInteriorNodes1.size() >= 2 && commonAdjacentInteriorNodes2.size() >= 2;
     }
 
     @Override
     public void transform(GraphModel graph, GraphNode eNode) {
-        List<InteriorNode> adjacentInteriorNodes = getAdjacentInteriorNodes((ENode) eNode);
+        if (!isApplicable(graph, eNode)) {
+            throw new RuntimeException("Graph not applicable");
+        } else {
+            List<InteriorNode> adjacentInteriorNodes = getAdjacentInteriorNodes((ENode) eNode);
 
-        List<InteriorNode> childInteriorNodes1 = getChildInteriorNodes(adjacentInteriorNodes.get(0));
-        List<ENode> childInteriorNodesAdjacentENodes1 = getChildInteriorNodesAdjacentENodes(childInteriorNodes1);
+            List<InteriorNode> childInteriorNodes1 = getChildInteriorNodes(adjacentInteriorNodes.get(0));
+            List<ENode> childInteriorNodesAdjacentENodes1 = getChildInteriorNodesAdjacentENodes(childInteriorNodes1);
 
-        List<InteriorNode> childInteriorNodes2 = getChildInteriorNodes(adjacentInteriorNodes.get(1));
-        List<ENode> childInteriorNodesAdjacentENodes2 = getChildInteriorNodesAdjacentENodes(childInteriorNodes2);
+            List<InteriorNode> childInteriorNodes2 = getChildInteriorNodes(adjacentInteriorNodes.get(1));
+            List<ENode> childInteriorNodesAdjacentENodes2 = getChildInteriorNodesAdjacentENodes(childInteriorNodes2);
 
-        List<ENode> commonENodes1 = getCommonENodes(childInteriorNodesAdjacentENodes2, childInteriorNodesAdjacentENodes1);
-        List<ENode> commonENodes2 = getCommonENodes(childInteriorNodesAdjacentENodes1, childInteriorNodesAdjacentENodes2);
+            List<ENode> commonENodes1 = getCommonENodes(childInteriorNodesAdjacentENodes2, childInteriorNodesAdjacentENodes1);
+            List<ENode> commonENodes2 = getCommonENodes(childInteriorNodesAdjacentENodes1, childInteriorNodesAdjacentENodes2);
 
-        replaceCommonENodes(graph, commonENodes1, commonENodes2);
+            replaceCommonENodes(graph, commonENodes1, commonENodes2);
+        }
     }
 
     private boolean hasTwoAdjacentInteriorNodes(ENode eNode) {
@@ -127,6 +133,25 @@ public class P9 implements TransformationMergeProposal {
         }
 
         return commonNodes;
+    }
+
+    private boolean verifyCoordinates(List<ENode> commonENodes) {
+        commonENodes.sort((eNode, t1) -> {
+            double lhsX = eNode.getXOrOriginalXCoordinate();
+            double rhsX = t1.getXOrOriginalXCoordinate();
+
+            double lhsY = eNode.getYOrOriginalYCoordinate();
+            double rhsY = t1.getYOrOriginalYCoordinate();
+
+            if (lhsX > rhsX) {
+                return 1;
+            } else if (lhsX < rhsX) {
+                return -1;
+            } else return Double.compare(lhsY, rhsY);
+        });
+
+        return (commonENodes.get(0).getXOrOriginalXCoordinate() + commonENodes.get(2).getXOrOriginalXCoordinate()) / 2 == commonENodes.get(1).getXOrOriginalXCoordinate()
+                && (commonENodes.get(0).getYOrOriginalYCoordinate() + commonENodes.get(2).getYOrOriginalYCoordinate()) / 2 == commonENodes.get(1).getYOrOriginalYCoordinate();
     }
 
     private List<InteriorNode> getCommonAdjacentInteriorNodes(List<ENode> eNodes) {

@@ -6,10 +6,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.javatuples.Pair;
 import pl.edu.agh.gg.common.ElementAttributes;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class GraphModel extends MultiGraph {
 
@@ -42,25 +39,27 @@ public class GraphModel extends MultiGraph {
 
     public Optional<GraphNode> removeGraphNode(String id) {
         GraphNode removedNode = nodes.remove(id);
-        this.setStrict(false);
         if (removedNode != null) {
+            this.setStrict(false);
+            List<String> edgeIdsToRemove = new ArrayList<>();
             edges.values().stream()
                     .filter(graphEdge -> graphEdge.getEdgeNodes().contains(removedNode))
                     .map(GraphEdge::getId)
                     .filter(edgeId -> edgeId.contains(removedNode.getId()))
-                    .forEach(this::removeEdge);
+                    .forEach(edgeId -> {
+                        edgeIdsToRemove.add(edgeId);
+                        removeEdge(edgeId);
+                    });
+            edgeIdsToRemove.forEach(edgeId -> edges.remove(edgeId));
             this.setStrict(true);
             return Optional.of(removedNode);
         }
-        this.setStrict(true);
         return Optional.empty();
     }
 
-    @Override
-    public <T extends Edge> T removeEdge(String id) {
-        T edge = super.removeEdge(id);
-//        System.out.println("Removed edge id: " + id);
-        return edge;
+    public void deleteGraphEdge(String id) {
+        edges.remove(id);
+        this.removeEdge(id);
     }
 
     public GraphEdge insertGraphEdge(String id, GraphNode n1, GraphNode n2) {
@@ -93,11 +92,6 @@ public class GraphModel extends MultiGraph {
         final Pair<GraphNode, GraphNode> edgeNodes = edge.getEdgeNodes();
         return (edgeNodes.getValue0() == n1 && edgeNodes.getValue1() == n2)
                 || (edgeNodes.getValue0() == n2 && edgeNodes.getValue1() == n1);
-    }
-
-    public void deleteGraphEdge(String id) {
-        edges.remove(id);
-        this.removeEdge(id);
     }
 
     public Optional<GraphNode> getGraphNode(String id) {
