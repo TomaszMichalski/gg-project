@@ -1,6 +1,7 @@
 package pl.edu.agh.gg.transform;
 
 import org.graphstream.graph.Node;
+import org.javatuples.Pair;
 import pl.edu.agh.gg.model.ENode;
 import pl.edu.agh.gg.model.GraphModel;
 import pl.edu.agh.gg.model.GraphNode;
@@ -34,7 +35,7 @@ public class P9 implements TransformationMergeProposal {
         List<InteriorNode> commonAdjacentInteriorNodes1 = getCommonAdjacentInteriorNodes(commonENodes1);
         List<InteriorNode> commonAdjacentInteriorNodes2 = getCommonAdjacentInteriorNodes(commonENodes2);
 
-        return commonENodes1.size() == 3 && commonENodes2.size() == 3 && commonAdjacentInteriorNodes1.size() == 2 && commonAdjacentInteriorNodes2.size() == 2;
+        return commonENodes1.size() == 3 && commonENodes2.size() == 3 && commonAdjacentInteriorNodes1.size() >= 2 && commonAdjacentInteriorNodes2.size() >= 2;
     }
 
     @Override
@@ -114,7 +115,8 @@ public class P9 implements TransformationMergeProposal {
 
         for (ENode eNode : eNodesToCompare) {
             List<ENode> common = eNodesToReturn.stream()
-                    .filter(eNode2 -> eNode2.equals(eNode))
+                    .filter(eNodeToReturn -> eNodeToReturn.equals(eNode))
+                    .filter(eNodeToReturn -> !eNodeToReturn.getId().equals(eNode.getId()))
                     .collect(Collectors.toList());
 
             for (ENode commonENode : common) {
@@ -144,16 +146,25 @@ public class P9 implements TransformationMergeProposal {
     }
 
     private void replaceCommonENodes(GraphModel graph, List<ENode> commonENodes1, List<ENode> commonENodes2) {
+        List<ENode> eNodesToReplace = new ArrayList<>();
+        List<Pair<ENode, ENode>> replacementPairs = new ArrayList<>();
+
         for (ENode eNode1 : commonENodes1) {
             for (ENode eNode2 : commonENodes2) {
                 if (eNode1.equals(eNode2)) {
                     if (eNode1.getCoordinates().getOriginalX() != 0 && eNode1.getCoordinates().getOriginalY() != 0) {
-                        eNode1.replaceWith(graph, eNode2, commonENodes1);
+                        eNodesToReplace.add(eNode1);
+                        replacementPairs.add(Pair.with(eNode1, eNode2));
                     } else {
-                        eNode2.replaceWith(graph, eNode1, commonENodes2);
+                        eNodesToReplace.add(eNode2);
+                        replacementPairs.add(Pair.with(eNode2, eNode1));
                     }
                 }
             }
+        }
+
+        for (Pair<ENode, ENode> replacementPair : replacementPairs) {
+            replacementPair.getValue0().replaceWith(graph, replacementPair.getValue1(), eNodesToReplace);
         }
     }
 }

@@ -23,13 +23,13 @@ public class MainP9 {
             p3.transform(graphModel, graphModel.getGraphNode("e1i1").get(), false);
         }
 
-//        if (p3.isApplicable(graphModel, graphModel.getGraphNode("e1i1i1").get(), false)) {
-//            p3.transform(graphModel, graphModel.getGraphNode("e1i1i1").get(), false);
-//        }
-//
-//        if (p3.isApplicable(graphModel, graphModel.getGraphNode("e1i1i2").get(), false)) {
-//            p3.transform(graphModel, graphModel.getGraphNode("e1i1i2").get(), false);
-//        }
+        if (p3.isApplicable(graphModel, graphModel.getGraphNode("e1i1i1").get(), false)) {
+            p3.transform(graphModel, graphModel.getGraphNode("e1i1i1").get(), false);
+        }
+
+        if (p3.isApplicable(graphModel, graphModel.getGraphNode("e1i1i2").get(), false)) {
+            p3.transform(graphModel, graphModel.getGraphNode("e1i1i2").get(), false);
+        }
 
         if (p3.isApplicable(graphModel, graphModel.getGraphNode("e1i1i3").get(), false)) {
             p3.transform(graphModel, graphModel.getGraphNode("e1i1i3").get(), false);
@@ -39,20 +39,20 @@ public class MainP9 {
             p3.transform(graphModel, graphModel.getGraphNode("e1i1i4").get(), false);
         }
 
-//        if (p9.isApplicable(graphModel, graphModel.getGraphNode("e1i1n2").get())) {
-//            p9.transform(graphModel, graphModel.getGraphNode("e1i1n2").get());
-//        }
+        if (p9.isApplicable(graphModel, graphModel.getGraphNode("e1i1n2").get())) {
+            p9.transform(graphModel, graphModel.getGraphNode("e1i1n2").get());
+        }
 
-//        if (p9.isApplicable(graphModel, graphModel.getGraphNode("e1i1n4").get())) {
-//            p9.transform(graphModel, graphModel.getGraphNode("e1i1n4").get());
-//        }
-//
-//        if (p9.isApplicable(graphModel, graphModel.getGraphNode("e1i1n6").get())) {
-//            p9.transform(graphModel, graphModel.getGraphNode("e1i1n6").get());
-//        }
-//
+        if (p9.isApplicable(graphModel, graphModel.getGraphNode("e1i1n6").get())) {
+            p9.transform(graphModel, graphModel.getGraphNode("e1i1n6").get());
+        }
+
         if (p9.isApplicable(graphModel, graphModel.getGraphNode("e1i1n8").get())) {
             p9.transform(graphModel, graphModel.getGraphNode("e1i1n8").get());
+        }
+
+        if (p9.isApplicable(graphModel, graphModel.getGraphNode("e1i1n4").get())) {
+            p9.transform(graphModel, graphModel.getGraphNode("e1i1n4").get());
         }
 
         Visualizer visualizer = new Visualizer(graphModel);

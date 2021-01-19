@@ -31,6 +31,8 @@ public class ENode extends GraphNode {
         for (GraphNode graphNode : this.getAdjacentENodes()) {
             if (!otherENodesToReplace.contains(graphNode)) {
                 replacement.addNeighbourENode(graphNode);
+//                System.out.println("Replacing: " + this.getId() + " with: " + replacement.getId() + " for: " + graphNode.getId());
+                graphNode.replaceNeighbourENode(this, replacement);
             }
         }
 
@@ -43,9 +45,11 @@ public class ENode extends GraphNode {
                 nodesForEdges.add(Pair.with(replacement, graphNode));
             }
         }
+//        System.out.println("Removed node id: " + this.getId() + ", replaced by node id: " + replacement.getId());
         graph.removeGraphNode(this.getId());
 
         for (Pair<ENode, GraphNode> pair : nodesForEdges) {
+//            System.out.println("Inserting graph edge between: " + pair.getValue0().getId() + " and: " + pair.getValue1().getId());
             graph.insertGraphEdge(getEdgeName(pair.getValue0(), pair.getValue1()), pair.getValue0(), pair.getValue1());
         }
     }

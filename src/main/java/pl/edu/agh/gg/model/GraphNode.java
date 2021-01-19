@@ -1,15 +1,15 @@
 package pl.edu.agh.gg.model;
 
-import org.javatuples.Pair;
-import pl.edu.agh.gg.common.ElementAttributes;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AbstractGraph;
 import org.graphstream.graph.implementations.AbstractNode;
 import org.graphstream.graph.implementations.SingleNode;
+import pl.edu.agh.gg.common.ElementAttributes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class GraphNode extends SingleNode {
     private Character symbol;
@@ -30,6 +30,11 @@ public abstract class GraphNode extends SingleNode {
 
     public void addNeighbourENode(GraphNode node) {
         adjacentENodes.add(node);
+    }
+
+    public void replaceNeighbourENode(GraphNode nodeToDelete, GraphNode nodeToAdd) {
+        adjacentENodes.remove(nodeToDelete);
+        adjacentENodes.add(nodeToAdd);
     }
 
     public GraphNode[] getAdjacentENodes() {

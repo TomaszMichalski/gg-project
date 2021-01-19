@@ -116,8 +116,9 @@ public class P3 extends Transformation {
         graphModel.insertGraphEdge(getEdgeName(nodes.get(7), nodes.get(6)), nodes.get(7),nodes.get(6));
         graphModel.insertGraphEdge(getEdgeName(nodes.get(8), nodes.get(12)), nodes.get(8),nodes.get(12));
         graphModel.insertGraphEdge(getEdgeName(nodes.get(8), nodes.get(5)), nodes.get(8),nodes.get(5));
-        graphModel.insertGraphEdge(getEdgeName(nodes.get(5), nodes.get(4)), nodes.get(5),nodes.get(4));
-        graphModel.insertGraphEdge(getEdgeName(nodes.get(5), nodes.get(10)), nodes.get(5),nodes.get(10));
+        graphModel.insertGraphEdge(getEdgeName(nodes.get(5), nodes.get(4)), nodes.get(5), nodes.get(4));
+        graphModel.insertGraphEdge(getEdgeName(nodes.get(1), nodes.get(10)), nodes.get(1), nodes.get(10));
+        graphModel.insertGraphEdge(getEdgeName(nodes.get(5), nodes.get(10)), nodes.get(5), nodes.get(10));
         graphModel.insertGraphEdge(getEdgeName(nodes.get(5), nodes.get(12)), nodes.get(5),nodes.get(12));
         graphModel.insertGraphEdge(getEdgeName(nodes.get(2), nodes.get(1)), nodes.get(2),nodes.get(1));
         graphModel.insertGraphEdge(getEdgeName(nodes.get(2), nodes.get(10)), nodes.get(2),nodes.get(10));
@@ -142,6 +143,7 @@ public class P3 extends Transformation {
 
         n4.addNeighbourENode(n1);
         n4.addNeighbourENode(newInterior1);
+        n4.addNeighbourENode(newInterior3);
         n4.addNeighbourENode(n5);
         n4.addNeighbourENode(n7);
 

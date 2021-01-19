@@ -1,13 +1,15 @@
 package pl.edu.agh.gg.model;
 
-import pl.edu.agh.gg.common.ElementAttributes;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.javatuples.Pair;
+import pl.edu.agh.gg.common.ElementAttributes;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class GraphModel extends MultiGraph {
 
@@ -45,12 +47,20 @@ public class GraphModel extends MultiGraph {
             edges.values().stream()
                     .filter(graphEdge -> graphEdge.getEdgeNodes().contains(removedNode))
                     .map(GraphEdge::getId)
+                    .filter(edgeId -> edgeId.contains(removedNode.getId()))
                     .forEach(this::removeEdge);
             this.setStrict(true);
             return Optional.of(removedNode);
         }
         this.setStrict(true);
         return Optional.empty();
+    }
+
+    @Override
+    public <T extends Edge> T removeEdge(String id) {
+        T edge = super.removeEdge(id);
+//        System.out.println("Removed edge id: " + id);
+        return edge;
     }
 
     public GraphEdge insertGraphEdge(String id, GraphNode n1, GraphNode n2) {
