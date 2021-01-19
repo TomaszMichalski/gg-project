@@ -32,6 +32,10 @@ public abstract class GraphNode extends SingleNode {
         adjacentENodes.add(node);
     }
 
+    public boolean removeNeighbourENode(GraphNode node) {
+        return adjacentENodes.remove(node);
+    }
+
     public GraphNode[] getAdjacentENodes() {
         return adjacentENodes.toArray(new GraphNode[0]);
     }

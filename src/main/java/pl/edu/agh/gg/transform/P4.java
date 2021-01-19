@@ -9,7 +9,7 @@ public class P4 extends Transformation {
 
     @Override
     public boolean isApplicable(GraphModel graphModel, GraphNode interiorNode, boolean isHorizontal) {
-        return interiorNode.isSymbolUpperCase() && orientate(graphModel, interiorNode, isHorizontal).isPresent();
+        return interiorNode.isSymbolUpperCase() && orientate(graphModel, interiorNode).isPresent();
     }
 
     @Override
@@ -20,7 +20,7 @@ public class P4 extends Transformation {
         int currentNodeLevel = (int) interiorNode.getLevel();
         int nextLevel = currentNodeLevel + 1;
 
-        GraphNode[] oldNodes = orientate(graphModel, interiorNode, isHorizontal).get();
+        GraphNode[] oldNodes = orientate(graphModel, interiorNode).get();
 
         List<GraphNode> nodes = new ArrayList<>();
 
@@ -37,12 +37,12 @@ public class P4 extends Transformation {
         GraphNode n6 = new ENode(graphModel, getNodeName(interiorNode, "n6"), Coordinates.createCoordinatesWithOffset(oldNodes[3].getXCoordinate(), oldNodes[3].getYCoordinate(), nextLevel));
 
 
-        double I1XCoordinate = !isHorizontal ? (n1.getXCoordinate() + n2.getXCoordinate()) / 2. : (n1.getXCoordinate() + n6.getXCoordinate()) / 2.;
-        double I1YCoordinate = !isHorizontal ? (n1.getYCoordinate() + n6.getYCoordinate()) / 2. : (n1.getYCoordinate() + n2.getYCoordinate()) / 2.;
+        double I1XCoordinate = (n1.getXCoordinate() + n2.getXCoordinate()) / 2.;
+        double I1YCoordinate = (n1.getYCoordinate() + n6.getYCoordinate()) / 2.;
         GraphNode newInterior1 = new InteriorNode(graphModel, getNodeName(interiorNode, "i1"), Coordinates.createCoordinatesWithoutOffset(I1XCoordinate, I1YCoordinate, nextLevel));
 
-        double I2XCoordinate = !isHorizontal ? (n2.getXCoordinate() + n3.getXCoordinate()) / 2. : (n2.getXCoordinate() + n5.getXCoordinate()) / 2.;
-        double I2YCoordinate = !isHorizontal ? (n2.getYCoordinate() + n5.getYCoordinate()) / 2. : (n2.getYCoordinate() + n3.getYCoordinate()) / 2.;
+        double I2XCoordinate = (n2.getXCoordinate() + n3.getXCoordinate()) / 2.;
+        double I2YCoordinate = (n2.getYCoordinate() + n5.getYCoordinate()) / 2.;
         GraphNode newInterior2 = new InteriorNode(graphModel, getNodeName(interiorNode, "i2"), Coordinates.createCoordinatesWithoutOffset(I2XCoordinate, I2YCoordinate, nextLevel));
 
         // Add nodes for visualizing edges
@@ -108,13 +108,13 @@ public class P4 extends Transformation {
         n6.addNeighbourENode(n5);
     }
 
-    private Optional<GraphNode[]> orientate(GraphModel graphModel, GraphNode interiorNode, boolean isHorizontal) {
+    private Optional<GraphNode[]> orientate(GraphModel graphModel, GraphNode interiorNode) {
 
         Optional<GraphNode[]> result = Optional.empty();
 
         Set<GraphNode> cornerNodes = new HashSet<>(Arrays.asList(interiorNode.getAdjacentENodes()));
 
-        if (cornerNodes.size() != 4) return result;
+        if (cornerNodes.size() < 4) return result;
 
         Set<GraphNode> lowerNodes = cornerNodes.stream().filter(node ->
                 Arrays.stream(node.getAdjacentENodes())
@@ -174,10 +174,13 @@ public class P4 extends Transformation {
             return result;
         }
 
-        if (!isHorizontal) {
-            return Optional.of(new GraphNode[]{leftUpper, rightUpper, rightLower, leftLower});
-        } else {
-            return Optional.of(new GraphNode[]{leftUpper, leftLower, rightLower, rightUpper});
+        if (!graphModel.getGraphNodes().containsAll(Arrays.asList(leftUpper, rightUpper, rightLower, leftLower, between.get(), interiorNode)))
+            return result;
+
+        if (!between.get().getCoordinates().equals(leftUpper.getCoordinates().middlePoint(rightUpper.getCoordinates()))) {
+            return result;
         }
+
+        return Optional.of(new GraphNode[]{leftUpper, rightUpper, rightLower, leftLower});
     }
 }
