@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static pl.edu.agh.gg.common.Utils.*;
+
 public class P7 extends Transformation {
 
     private static final int REQUIRED_EDGE_COUNT = 11;
@@ -54,60 +56,54 @@ public class P7 extends Transformation {
 
         // Create new edge nodes
         r.x14 = pushDown(l.i, "e14");
-        r.x34 = new ENode(graphModel, getNodeName(l.i, "e34"), mid(r.x3, r.x4));
+        r.x34 = addE(graphModel, getNodeName(l.i, "e34"), mid(r.x3, r.x4));
 
         // Create new interiors
-        r.i1 = new InteriorNode(graphModel, getNodeName(l.i, "i1"), mid(r.x1, r.x14));
-        r.i2 = new InteriorNode(graphModel, getNodeName(l.i, "i2"), mid(r.x2, r.x14));
-        r.i3 = new InteriorNode(graphModel, getNodeName(l.i, "i3"), mid(r.x3, r.x14));
-        r.i4 = new InteriorNode(graphModel, getNodeName(l.i, "i4"), mid(r.x4, r.x14));
-
-        // Insert nodes into graph
-        Stream.of(
-                r.x1, r.x12, r.x2, r.x13, r.x14, r.x24, r.x3, r.x34, r.x4,
-                r.i1, r.i2, r.i3, r.i4
-        ).forEach(graphModel::insertGraphNode);
+        r.i1 = addI(graphModel, getNodeName(l.i, "i1"), mid(r.x1, r.x14));
+        r.i2 = addI(graphModel, getNodeName(l.i, "i2"), mid(r.x2, r.x14));
+        r.i3 = addI(graphModel, getNodeName(l.i, "i3"), mid(r.x3, r.x14));
+        r.i4 = addI(graphModel, getNodeName(l.i, "i4"), mid(r.x4, r.x14));
 
         // Add interior-interior edges
-        addEdge(l.i, r.i1);
-        addEdge(l.i, r.i2);
-        addEdge(l.i, r.i3);
-        addEdge(l.i, r.i4);
+        addEdge(graphModel, l.i, r.i1);
+        addEdge(graphModel, l.i, r.i2);
+        addEdge(graphModel, l.i, r.i3);
+        addEdge(graphModel, l.i, r.i4);
 
         // Add interior-edge edges (clockwise)
-        addEdge(r.i1, r.x1);
-        addEdge(r.i1, r.x12);
-        addEdge(r.i1, r.x14);
-        addEdge(r.i1, r.x13);
+        addEdge(graphModel, r.i1, r.x1);
+        addEdge(graphModel, r.i1, r.x12);
+        addEdge(graphModel, r.i1, r.x14);
+        addEdge(graphModel, r.i1, r.x13);
 
-        addEdge(r.i2, r.x12);
-        addEdge(r.i2, r.x2);
-        addEdge(r.i2, r.x24);
-        addEdge(r.i2, r.x14);
+        addEdge(graphModel, r.i2, r.x12);
+        addEdge(graphModel, r.i2, r.x2);
+        addEdge(graphModel, r.i2, r.x24);
+        addEdge(graphModel, r.i2, r.x14);
 
-        addEdge(r.i3, r.x13);
-        addEdge(r.i3, r.x14);
-        addEdge(r.i3, r.x34);
-        addEdge(r.i3, r.x3);
+        addEdge(graphModel, r.i3, r.x13);
+        addEdge(graphModel, r.i3, r.x14);
+        addEdge(graphModel, r.i3, r.x34);
+        addEdge(graphModel, r.i3, r.x3);
 
-        addEdge(r.i4, r.x14);
-        addEdge(r.i4, r.x24);
-        addEdge(r.i4, r.x4);
-        addEdge(r.i4, r.x34);
+        addEdge(graphModel, r.i4, r.x14);
+        addEdge(graphModel, r.i4, r.x24);
+        addEdge(graphModel, r.i4, r.x4);
+        addEdge(graphModel, r.i4, r.x34);
 
         // Add edge-edge edges (clockwise starting from noon <=> by rows right to left)
-        addEdge(r.x2, r.x24);
-        addEdge(r.x12, r.x2);
-        addEdge(r.x12, r.x14);
-        addEdge(r.x1, r.x12);
-        addEdge(r.x1, r.x13);
-        addEdge(r.x24, r.x4);
-        addEdge(r.x14, r.x24);
-        addEdge(r.x14, r.x34);
-        addEdge(r.x13, r.x14);
-        addEdge(r.x13, r.x3);
-        addEdge(r.x34, r.x4);
-        addEdge(r.x3, r.x34);
+        addEdge(graphModel, r.x2, r.x24);
+        addEdge(graphModel, r.x12, r.x2);
+        addEdge(graphModel, r.x12, r.x14);
+        addEdge(graphModel, r.x1, r.x12);
+        addEdge(graphModel, r.x1, r.x13);
+        addEdge(graphModel, r.x24, r.x4);
+        addEdge(graphModel, r.x14, r.x24);
+        addEdge(graphModel, r.x14, r.x34);
+        addEdge(graphModel, r.x13, r.x14);
+        addEdge(graphModel, r.x13, r.x3);
+        addEdge(graphModel, r.x34, r.x4);
+        addEdge(graphModel, r.x3, r.x34);
     }
 
     private Optional<LeftEmbedding> getLeftEmbedding() {
@@ -131,8 +127,8 @@ public class P7 extends Transformation {
             for (int j = i + 1; j < es.size(); ++j) {
                 if (es.get(i).hasEdgeBetween(es.get(j))) {
                     // remove j first as it's always > i, so removal doesn't change i's index
-                    e.x3 = es.remove(j);
-                    e.x4 = es.remove(i);
+                    e.x4 = es.remove(j);
+                    e.x3 = es.remove(i);
                     break;
                 }
             }
@@ -184,10 +180,6 @@ public class P7 extends Transformation {
         return Optional.of(e);
     }
 
-    private Coordinates mid(GraphNode a, GraphNode b) {
-        return a.getCoordinates().middlePoint(b.getCoordinates());
-    }
-
     private Optional<ENode> getMidpoint(GraphNode a, GraphNode b) {
         List<ENode> candidates = Arrays.stream(a.getAdjacentENodes())
                 .filter(n -> n.getCoordinates().equals(mid(a, b)) && n.hasEdgeBetween(b))
@@ -203,20 +195,10 @@ public class P7 extends Transformation {
 
     private ENode pushDown(GraphNode n, String name) {
         Coordinates c = Coordinates.createCoordinatesWithOffset(n.getXCoordinate(), n.getYCoordinate(), n.getLevel() + 1);
-        return new ENode(graphModel, getNodeName(interiorNode, name), c);
+        return addE(graphModel, getNodeName(interiorNode, name), c);
     }
 
-    private void addEdge(GraphNode a, GraphNode b) {
-        graphModel.insertGraphEdge(getEdgeName(a, b), a, b);
-        if (a instanceof ENode) {
-            b.addNeighbourENode(a);
-        }
-        if (b instanceof ENode) {
-            a.addNeighbourENode(b);
-        }
-    }
-
-    private static final class LeftEmbedding {
+    protected static final class LeftEmbedding {
         InteriorNode i;
         ENode x1;
         ENode x12;
@@ -227,7 +209,7 @@ public class P7 extends Transformation {
         ENode x4;
     }
 
-    private static final class RightEmbedding {
+    protected static final class RightEmbedding {
         InteriorNode i1;
         InteriorNode i2;
         InteriorNode i3;

@@ -13,7 +13,7 @@ import java.util.*;
 
 public abstract class GraphNode extends SingleNode {
     private Character symbol;
-    private final Coordinates coordinates;
+    private Coordinates coordinates;
 
     private final List<GraphNode> adjacentENodes = new ArrayList<>();
 
@@ -62,6 +62,10 @@ public abstract class GraphNode extends SingleNode {
 
     public Coordinates getCoordinates() {
         return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override
