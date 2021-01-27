@@ -29,8 +29,11 @@ public class ENode extends GraphNode {
         this.getCoordinates().setOriginalY(0.0);
 
         for (GraphNode graphNode : this.getAdjacentENodes()) {
-            replacement.addNeighbourENode(graphNode);
-            graphNode.replaceNeighbourENode(this, replacement);
+            graphNode.removeNeighbourENode(this);
+            if (!graph.areNodesConnected(replacement, graphNode)) {
+                replacement.addNeighbourENode(graphNode);
+                graphNode.addNeighbourENode(replacement);
+            }
         }
 
         List<Pair<GraphNode, GraphNode>> nodesForEdges = new ArrayList<>();
@@ -46,7 +49,11 @@ public class ENode extends GraphNode {
         graph.removeNode(this.getId());
 
         for (Pair<GraphNode, GraphNode> pair : nodesForEdges) {
+          try {
             graph.insertGraphEdge(getEdgeName(pair.getValue0(), pair.getValue1()), pair.getValue0(), pair.getValue1());
+          } catch (Exception ex) {
+            System.err.printf("Edge with name %s already exists%n", getEdgeName(pair.getValue0(), pair.getValue1()));
+          }
         }
     }
 }

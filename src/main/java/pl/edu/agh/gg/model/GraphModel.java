@@ -1,12 +1,14 @@
 package pl.edu.agh.gg.model;
 
+import pl.edu.agh.gg.common.ElementAttributes;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.javatuples.Pair;
-import pl.edu.agh.gg.common.ElementAttributes;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class GraphModel extends MultiGraph {
 
@@ -88,6 +90,13 @@ public class GraphModel extends MultiGraph {
                 .anyMatch(egde -> checkEdgeEndNodes(egde, n1, n2));
     }
 
+    public boolean areNodesConnected(String id1, String id2) {
+        var firstNode = this.nodes.get(id1);
+
+        return firstNode.getAdjacentENodesList().stream()
+            .anyMatch(node -> node.getId().equals(id2));
+    }
+
     public boolean checkEdgeEndNodes(GraphEdge edge, GraphNode n1, GraphNode n2) {
         final Pair<GraphNode, GraphNode> edgeNodes = edge.getEdgeNodes();
         return (edgeNodes.getValue0() == n1 && edgeNodes.getValue1() == n2)
@@ -122,6 +131,17 @@ public class GraphModel extends MultiGraph {
                 .forEach(graphModel::insertGraphEdge);
 
         return graphModel;
+    }
+
+    public Stream<GraphNode> getConnectedNodes(GraphNode graphNode) {
+        return nodes.values().stream()
+            .filter(node -> areNodesConnected(node, graphNode));
+    }
+
+    public Stream<InteriorNode> getConnectedINodes(GraphNode graphNode) {
+        return getConnectedNodes(graphNode)
+            .filter(node -> node instanceof InteriorNode)
+            .map(node -> (InteriorNode) node);
     }
 
     public GraphModel getGraphModelUpTo(double level) {
