@@ -8,9 +8,11 @@ public final class Coordinates {
     private static final double OFFSET_Y = -1.5;
     private static final double EPSILON = 0.0005;
 
-    private final double x;
-    private final double y;
-    private final double level;
+    private double x;
+    private double y;
+    private double originalX;
+    private double originalY;
+    private double level;
 
     public static Coordinates createCoordinatesWithOffset(double x, double y, double level) {
         return new Coordinates(x + level * OFFSET_X, y + level * OFFSET_Y, level);
@@ -34,8 +36,36 @@ public final class Coordinates {
         return y;
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getOriginalX() {
+        return originalX;
+    }
+
+    public double getOriginalY() {
+        return originalY;
+    }
+
+    public void setOriginalX(double originalX) {
+        this.originalX = originalX;
+    }
+
+    public void setOriginalY(double originalY) {
+        this.originalY = originalY;
+    }
+
     public double getLevel() {
         return level;
+    }
+
+    public void setLevel(double level) {
+        this.level = level;
     }
 
     public double distance(Coordinates rhs) {
@@ -63,9 +93,12 @@ public final class Coordinates {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Coordinates coordinates = (Coordinates) o;
-        return Math.abs(coordinates.x - x) < EPSILON &&
-                Math.abs(coordinates.y - y) < EPSILON &&
-                coordinates.level == level;
+        return ((((originalX != 0 && originalY != 0) || (coordinates.originalX != 0 && coordinates.originalY != 0))
+                && ((Math.abs(coordinates.originalX - originalX) < EPSILON && Math.abs(coordinates.originalY - originalY) < EPSILON)
+                || (Math.abs(coordinates.originalX - x) < EPSILON && Math.abs(coordinates.originalY - y) < EPSILON)
+                || (Math.abs(coordinates.x - originalX) < EPSILON && Math.abs(coordinates.y - originalY) < EPSILON)))
+                || (Math.abs(coordinates.x - x) < EPSILON && Math.abs(coordinates.y - y) < EPSILON))
+                && coordinates.level == level;
     }
 
     @Override
